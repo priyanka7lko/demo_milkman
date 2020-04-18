@@ -1,25 +1,27 @@
 package pages;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import pages.SeleniumHelper;
 
 public class AbstractTest {
 
     private final String url = "https://demo.milkmanapps.com/site/login";
     private final String chromedriverPath = "/Users/priyankaverma/chromedriver/chromedriver";
+    private final String appUsername = "prakhar";
+    private final String appPassword = "123";
     private WebDriver driver;
+    private HomePage homePage;
     private SeleniumHelper helper;
 
     @Before
-    public void before() {
+    public void createDriverAndOpenBrowser() {
         if (driver == null) {
             createDriver();
         }
         openBrowser();
+        homePage = loginWithGivenCredentials(appUsername, appPassword);
     }
 
     public void createDriver() {
@@ -34,8 +36,18 @@ public class AbstractTest {
         driver.switchTo().window(windowHandle);
     }
 
-    private void login() {
+    public HomePage loginWithGivenCredentials(final String username, final String password) {
         helper = new SeleniumHelper(driver);
         helper.waitForVisibilityOfElement(By.xpath("//h4[contains(text(),'Mr. Milkman')]"));
+        LoginPage loginPage = getLoginPage();
+        return loginPage.login(username, password);
+    }
+
+    public LoginPage getLoginPage() {
+        return new LoginPage(helper);
+    }
+
+    public HomePage getHomePage() {
+        return homePage;
     }
 }
